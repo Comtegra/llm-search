@@ -59,7 +59,7 @@ After you set up your CGC Environment.
 
 1. Clone the repository:
    ```bash
-   git clone git@github.com:Comtegra/llm-search.git
+   git clone https://github.com/Comtegra/llm-search
    cd llm-search
    ```
 
