@@ -7,7 +7,7 @@ A simple Open-Source Perplexity AI clone. Made with ❤️ by [Comtegra S.A.](ht
 
 ## Overview
 
-This application leverages Large Language Models (LLMs) combined with web search capabilities to efficiently retrieve and summarize information. Users can input questions in natural language and receive detailed, customizable summaries based on real-time web search results or uploaded PDF files. Utilizing advanced AI technology, including models such as [llama3.1:8b-instruct-fp16](https://ollama.com/library/llama3.1:8b-instruct-fp16), the app delivers context-aware responses and maintains transparency regarding its information sources.
+This application leverages Large Language Models (LLMs) combined with web search capabilities to efficiently retrieve and summarize information. Users can input questions in natural language and receive detailed, customizable summaries based on real-time web search results or uploaded PDF files. Utilizing advanced AI technology, including models such as [SpeakLeash/bielik-11b-v2.2-instruct:Q8_0](https://ollama.com/SpeakLeash/bielik-11b-v2.2-instruct:Q8_0), the app delivers context-aware responses and maintains transparency regarding its information sources.
 
 
 ## Features
@@ -27,7 +27,7 @@ This application leverages Large Language Models (LLMs) combined with web search
 - **Frontend**: Streamlit
 - **Backend**: Python
 - **AI Models**: 
-  - Large Language Models (LLMs) via Ollama (e.g., llama3.1:8b-instruct-fp16)
+  - Large Language Models (LLMs) via Ollama (e.g., bielik-11b-v2.2-instruct)
 - **Natural Language Processing**: Ollama
 - **Web Scraping**: BeautifulSoup
 - **Search Engine Integration**: Google Search API
@@ -75,7 +75,7 @@ After you set up your CGC Environment.
      ```
    - Pull desired models:
      ```
-     ollama pull llama3.1:8b-instruct-fp16
+     ollama pull SpeakLeash/bielik-11b-v2.2-instruct:Q8_0
      ```
 
 >**Note**: Models must be pulled in a different terminal window than the one running `ollama serve`. Ensure that Ollama is running (`ollama serve`) in a separate terminal window before starting the Streamlit app for proper functionality. 

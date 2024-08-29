@@ -10,14 +10,14 @@ The AI-Powered Web Search Summarization tool on CGC enhances online research by 
 
 This tool can utilize any AI model compatible with Ollama. For this specific application, we use:
 
-1. llama3.1:8b-instruct-fp16:
-   - A fine-tuned version of Meta's Llama model
-   - 8 billion parameter model optimized for instruction following
-   - Uses 16-bit floating point precision for efficient performance
-   - Excels in general language understanding and generation
-   - Best for tasks requiring broad knowledge and context comprehension
+1. SpeakLeash/bielik-11b-v2.2-instruct:Q8_0:
+   - 11 billion parameters
+   - 32,768 token context window
+   - Enhanced NLP capabilities
+   - Improved training data
+   - Flexible deployment options
 
-While this app is configured to use llama3.1:8b-instruct-fp16, users can easily configure other compatible models based on their specific needs.
+While this app is configured to use SpeakLeash/bielik-11b-v2.2-instruct:Q8_0, users can easily configure other compatible models based on their specific needs.
 
 
 ## Understanding the Platform
@@ -74,7 +74,7 @@ ollama serve
 ```
 b. Pull the required models:
 ```
-ollama pull llama3.1:8b-instruct-fp16
+ollama pull SpeakLeash/bielik-11b-v2.2-instruct:Q8_0
 ```
 > **Note**: Run `ollama serve` in one terminal window and pull models in a separate terminal window to avoid conflicts.
 
@@ -124,7 +124,7 @@ Adjust the search parameters to fit your needs:
 - **Word limit per page**: 3500 (to capture more detailed information)
 - **Summary length**: Medium
 - **Summary focus**: Main Points
-- **AI model**: llama3.1:8b-instruct-fp16
+- **AI model**: SpeakLeash/bielik-11b-v2.2-instruct:Q8_0
 - **Temperature**: 0.2 (adjusts the level of creativity in the AI's output; lower values produce more precise and predictable results)
 
 > **Tip**: Experiment with these settings to find the best combination for your research needs.
@@ -208,7 +208,7 @@ Use the tool for iterative research:
    - Verify that you're using the correct base path in the URL.
    - If the app crashes frequently:
      - Check system logs for error messages.
-     - Ensure you have sufficient resources (CPU, RAM, GPU memory) to run the selected AI model. For example, llama3.1:8b-instruct-fp16 requires at least 16GB of GPU memory.
+     - Ensure you have sufficient resources (CPU, RAM, GPU memory) to run the selected AI model. For example, SpeakLeash/bielik-11b-v2.2-instruct:Q8_0 requires at least 16GB of GPU memory.
 
 7. **Authentication Failures**:
    - Double-check the provided username and password.

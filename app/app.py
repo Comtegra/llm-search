@@ -103,7 +103,7 @@ if authentication_status:
 
     # Initialize Ollama client
     client = Client(host="http://localhost:9001")
-    default_model = "llama3.1:8b-instruct-fp16" # Adjust the model as needed
+    default_model = "SpeakLeash/bielik-11b-v2.2-instruct:Q8_0" # Adjust the model as needed
 
     # Function to scrape content from a URL
     def scrape_content(url):
@@ -286,11 +286,7 @@ if authentication_status:
                 combined_content = "\n\n".join(contents)
 
                 # Detect language in which you should respond
-                try:
-                    query_language = detect(combined_content)
-                except:
-                    st.warning("Could not detect language. Defaulting to English.")
-                    query_language = "en"
+                query_language = "pl"
 
 
                 # Modify the prompt to include customizable summarization
@@ -333,11 +329,7 @@ if authentication_status:
                     savePromptToFile(query)
 
                 # Detect language in which you should respond
-                try:
-                    query_language = detect(combined_content)
-                except:
-                    st.warning("Could not detect query language. Defaulting to English.")
-                    query_language = "en"
+                query_language = "pl"
 
                 # Modify the prompt to include customizable summarization
                 summary_length_words = {"Short": "100-150", "Medium": "200-250", "Long": "300-350"}
