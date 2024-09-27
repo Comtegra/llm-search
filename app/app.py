@@ -1,10 +1,9 @@
 import streamlit as st
-from ollama import Client
-import ollama
 from googlesearch import search
 import requests
 import pdftotext
 from datetime import datetime, timedelta
+from openai import OpenAI
 from bs4 import BeautifulSoup
 from langdetect import detect
 import streamlit_authenticator as stauth
@@ -12,7 +11,7 @@ from streamlit_authenticator.utilities.hasher import Hasher
 import yaml
 from yaml.loader import SafeLoader
 
-# Gotta be on top of the file
+#Gotta be on top of the file
 st.set_page_config(page_title="AI-Powered Web Search", layout="wide", page_icon="app/favicon.ico")
 
 with open('app/secret.yaml') as file:
@@ -35,7 +34,7 @@ if authentication_status:
 
     query = st.text_input("Enter your question to do a web search:", placeholder="What is the capital of France?")
 
-    #Save user prompt and timestamp to a file. 
+    #Save user prompt and time to a file. 
     def savePromptToFile(prompt):
         with open("user_prompt.txt", "a") as file:
             file.write(f'{now.strftime("%d-%m-%Y %H:%M:%S")} - {prompt}\n') 
@@ -52,9 +51,9 @@ if authentication_status:
             num_results = st.slider("Number of search results:", min_value=1, max_value=5, value=3, step=1)
         else:
             custom_urls = st.text_area("Enter URLs (one per line, max 5):", height=100)
-        word_limit = st.slider("Word limit per page:", min_value=1000, max_value=7000, value=3500, step=250)
+        word_limit = st.slider("Word limit per page:", min_value=1000, max_value=5000, value=3500, step=250)
     else:
-        word_limit = st.slider("Word limit per PDF file:", min_value=1000, max_value=25000, value=10000, step=500)
+        word_limit = st.slider("Word limit per PDF file:", min_value=1000, max_value=12000, value=10000, step=500)
 
 
 
@@ -101,9 +100,8 @@ if authentication_status:
         # Add logout button
         authenticator.logout("Logout", "sidebar")
 
-    # Initialize Ollama client
-    client = Client(host="http://localhost:9001")
-    default_model = "SpeakLeash/bielik-11b-v2.2-instruct:Q8_0" # Adjust the model as needed
+    # Initialize OpenAI client
+    client = OpenAI(base_url="", api_key="")
 
     # Function to scrape content from a URL
     def scrape_content(url):
@@ -149,17 +147,17 @@ if authentication_status:
 
             Only use the provided sources. If you can't answer based on this information, clearly state so."""
                 
-            response = ollama.chat(
-                model=default_model,  # Adjust the model as needed
+            response = client.chat.completions.create(
+                model="llama3.1:8b-instruct-fp16",  # Adjust the model as needed
                 messages=[
                     {
                         "role": "user",
                         "content": prompt
                     }
                 ],
-                options={"temperature": temperature}
+                temperature=temperature
             )
-            summary = response['message']['content']
+            summary = response.choices[0].message.content
             return summary
         elif summary_focus == "Custom":
             prompt = f"""Analyze and answer this question: '{query}'. Use only the following information sources: {combined_content}
@@ -171,17 +169,17 @@ if authentication_status:
 
             Only use the provided sources. If you can't answer based on this information, clearly state so."""
 
-            response = ollama.chat(
-                model=default_model, # Adjust the model as needed
+            response = client.chat.completions.create(
+                model="llama3.1:8b-instruct-fp16", # Adjust the model as needed
                 messages=[
                     {
                         "role": "user",
                         "content": prompt
                     }
                 ],
-                options={"temperature": temperature}
+                temperature=temperature
             )
-            summary = response['message']['content']
+            summary = response.choices[0].message.content
             return summary
         elif uploaded_file:
             prompt = f"""Analyze and answer ONLY this question: '{query}'. Use only the following information sources: {combined_content}
@@ -202,18 +200,20 @@ if authentication_status:
 
             Only use the provided sources. If you can't answer based on this information, clearly state so."""
             
-            response = ollama.chat(
-                model=default_model, # Adjust the model as needed
+            response = client.chat.completions.create(
+                model="llama3.1:8b-instruct-fp16",  # Adjust the model as needed
                 messages=[
                     {
                         "role": "user",
                         "content": prompt
                     }
                 ],
-                options={"temperature": temperature}
+                temperature=temperature
             )
-            summary = response['message']['content']
+            summary = response.choices[0].message.content
             return summary
+
+
 
     # Function to generate related questions
     def generate_related_questions(query, summary, num_questions=3):
@@ -231,18 +231,18 @@ if authentication_status:
         Remember: All questions MUST be in {query_language}.
         """
 
-        response = ollama.chat(
-            model=default_model,  # Adjust the model as needed
+        response = client.chat.completions.create(
+            model="llama3.1:8b-instruct-fp16",  # Adjust the model as needed
             messages=[
                 {
                     "role": "user",
                     "content": prompt
                 }
             ],
-            options={"temperature": temperature}
+            temperature=temperature
         )
-        related_questions = response['message']['content']
-        return related_questions
+        summary = response.choices[0].message.content
+        return summary
 
 
 
@@ -261,7 +261,9 @@ if authentication_status:
             st.error("Error processing PDF file. Please try again with a different file.")
             return ""
 
-    if st.button("Search") or query:
+
+    
+    if st.button("Search"):
         if query and not uploaded_file:
             with st.spinner("Thinking..."):
                 # Perform Google search or use custom URLs
@@ -286,7 +288,10 @@ if authentication_status:
                 combined_content = "\n\n".join(contents)
 
                 # Detect language in which you should respond
-                query_language = "pl"
+                try:
+                    query_language = "pl"
+                except:
+                    query_language = "pl"
 
 
                 # Modify the prompt to include customizable summarization
@@ -301,6 +306,7 @@ if authentication_status:
                 # summary_focus twice because it's the default value returned
                 focus_prompt = focus_instructions.get(summary_focus, summary_focus) 
                 
+
                 # Generate summary using Llama 3.1
                 summary = generate_summary(query)
                 
@@ -329,7 +335,10 @@ if authentication_status:
                     savePromptToFile(query)
 
                 # Detect language in which you should respond
-                query_language = "pl"
+                try:
+                    query_language = "pl"
+                except:
+                    query_language = "pl"
 
                 # Modify the prompt to include customizable summarization
                 summary_length_words = {"Short": "100-150", "Medium": "200-250", "Long": "300-350"}
